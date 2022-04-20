@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+
+if ($taskId = recognizeTaskId()) {
+    // we did recognize task ID,
+    // so let's put it to the commit msg
+    $commitMsg = file_get_contents($argv[1]);
+    
+    if (false === stripos($commitMsg, '#' . $taskId)) {
+        writeCommitMsg($argv[1], $commitMsg . PHP_EOL . PHP_EOL . 'Refs: #' . $taskId);
+    }
+}
+
+exit(0);
+
+function writeCommitMsg(string $path, string $msg): void {
+    file_put_contents($path, $msg);
+}
+
+function recognizeTaskId(): ?int {
+    $chunks = explode('/', getBranchName());
+    
+    foreach ($chunks as $chunk) {
+        if ($id = (int)$chunk) {
+            return $id;
+        }
+    }
+}
+
+function getBranchName(): string {
+    $output = null;
+    exec('git branch', $output);
+    
+    foreach ($output as $line) {
+        if ($line[0] === '*') {
+            return substr($line, 2);
+        }
+    }
+}
