@@ -25,6 +25,8 @@ function recognizeTaskId(): ?int {
             return $id;
         }
     }
+
+    return null;
 }
 
 function getBranchName(): string {
