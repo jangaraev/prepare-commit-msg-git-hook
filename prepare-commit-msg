@@ -1,13 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+const REFS = 'Refs: #';
+
 if ($taskId = recognizeTaskId()) {
     // we did recognize task ID,
     // so let's put it to the commit msg
     $commitMsg = file_get_contents($argv[1]);
     
-    if (false === stripos($commitMsg, '#' . $taskId)) {
-        writeCommitMsg($argv[1], $commitMsg . PHP_EOL . PHP_EOL . 'Refs: #' . $taskId);
+    if (false === stripos($commitMsg, REFS) && false === stripos($commitMsg, '#' . $taskId)) {
+        writeCommitMsg($argv[1], $commitMsg . PHP_EOL . PHP_EOL . REFS . $taskId);
     }
 }
 
